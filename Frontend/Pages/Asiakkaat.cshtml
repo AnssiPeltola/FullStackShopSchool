@@ -1,0 +1,203 @@
+﻿@page
+@model VerkkokauppaFrontti.Pages.AsiakkaatModel
+@{
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Asiakkaat</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css">
+</head>
+
+<body>
+
+<section id="alkuun">
+    <a href="#asiakkaat">Asiakkaat</a>
+    <a href="#tuotteet">Tuotteet</a>
+    <a href="#tilaukset">Tilaukset</a>
+</section>
+
+<section id="asiakkaat">
+    <h1>Asiakkaat</h1>
+    <h3>Lisää asiakas</h3>
+    <form method="post" asp-page-handler="AddCustomer">
+        <label for="name">Nimi:</label>
+        <input type="text" id="name" name="name" required>
+        <label for="email">Email:</label>
+        <input type="email" onkeyup="this.value = this.value.toLowerCase();" id="email" name="email" required>
+        <label for="address">Osoite:</label>
+        <input type="text" id="address" name="address" required>
+        <label for="phonenumber">Puhelinnumero:</label>
+        <input type="text" id="phonenumber" name="phonenumber" required>
+        <input type="submit" value="Submit">
+    </form>
+</section>
+
+    <p>------------------------------------------------------------------------------------------------</p>
+
+    <h3>Hae Asiakastiedot</h3>
+
+    <form method="post" asp-page-handler="GetCustomer">
+        <label for="email">Email:</label>
+        <input type="email" onkeyup="this.value = this.value.toLowerCase();" id="email2" name="email" required>
+        <input type="submit" value="Submit">
+    </form>
+
+    @*Tämä antaa ne tiedot jotka halutaan ottaa!*@
+    <div id="customer-info">
+        @if (Model.Customer != null)
+        {
+            <p>Asiakkaan ID: @Model.Customer.id</p>
+            <p>Asiakkaan nimi: @Model.Customer.nimi</p>
+            <p>Asiakkaan email: @Model.Customer.email</p>
+            <p>Asiakkaan osoite: @Model.Customer.osoite</p>
+            <p>Asiakkaan puhelinnumero: @Model.Customer.puhelinnumero</p>
+        }
+        @if (Model.Customer == null)
+        {
+            <p>Asiakasta ei löytynyt</p>
+        }
+    </div>
+
+    <p>------------------------------------------------------------------------------------------------</p>
+
+    <h3>Päivitä Asiakastiedot</h3>  
+    <form method="post" asp-page-handler="UpdateCustomer">
+        <label for="email">Email:</label>
+        <input type="email" onkeyup="this.value = this.value.toLowerCase();" id="email3" name="email" required>
+        <label for="column">Sarake:</label>
+        <select id="column" name="column">
+            <option value="nimi">Nimi</option>
+            <option value="email">Email</option>
+            <option value="osoite">Osoite</option>
+            <option value="puhelinnumero">Puhelinnumero</option>
+        </select>
+        <label for="newInfo">Uusi tieto:</label>
+        <input type="text" id="newInfo" name="newInfo" required>
+        <input type="submit" value="Submit">
+    </form>
+
+    <p>------------------------------------------------------------------------------------------------</p>
+
+    <h3>Poista Asiakas</h3>
+    <form method="post" asp-page-handler="DeleteCustomer">
+        <label for="email">Email:</label>
+        <input type="email" onkeyup="this.value = this.value.toLowerCase();" id="email4" name="email" required>
+        <input type="submit" value="Submit">
+    </form>
+
+    <p>------------------------------------------------------------------------------------------------</p>
+<section id="tuotteet">
+
+    <h1>Tuotteet</h1>
+    <h3>Lisää tuote</h3>
+    <form method="post" asp-page-handler="AddProduct" enctype="multipart/form-data">
+        <label for="product">Tuote:</label>
+        <input type="text" id="product" name="name" required>
+        <label for="category">Kategoria:</label>
+        <input type="text" id="category" name="productCtgory" required>
+        <label for="category2">Kategoria 2:</label>
+        <input type="text" id="category2" name="productCtgory2" required>
+        <label for="price">Hinta:</label>
+        <input type="number" id="price" name="price" step="0.01" min="0" required>
+        <label for="amount">Määrä:</label>
+        <input type="number" id="amount" name="amount" step="1" min="0" required>
+        <label for="img">Kuva:</label>
+        <input type="file" id="img" name="img" required>
+        <label for="description">Kuvaus:</label>
+        <input type="text" id="description" name="description" required>
+        <input type="submit" value="Lisää tuote">
+    </form>
+</section>
+    <p>------------------------------------------------------------------------------------------------</p>
+
+    <h3>Päivitä tuotetta</h3>
+     <form id="updateForm" method="post" asp-page-handler="UpdateProduct">
+        <div>
+            <label for="productName">Tuotteen nimi jota päivitetään:</label>
+            <select id="productName" name="productName">
+                @foreach (var productName in Model.ProductNames)
+                {
+                    <option value="@productName">@productName</option>
+                }
+            </select>
+        </div>
+        <div>
+            <input type="checkbox" id="nimiCheckbox" name="fields" value="nimi">
+            <label for="nimiCheckbox">Tuotteen nimi</label>
+            <input type="text" name="nimi" style="display: none;">
+        </div>
+        <div>
+            <input type="checkbox" id="kategoriaCheckbox" name="fields" value="kategoria">
+            <label for="kategoriaCheckbox">Kategoria</label>
+            <input type="text" name="kategoria" style="display: none;">
+        </div>
+        <div>
+            <input type="checkbox" id="kategoriaKaksiCheckbox" name="fields" value="kategoria_kaksi">
+            <label for="kategoriaKaksiCheckbox">Kategoria 2</label>
+            <input type="text" name="kategoria_kaksi" style="display: none;">
+        </div>
+        <div>
+            <input type="checkbox" id="hintaCheckbox" name="fields" value="hinta">
+            <label for="hintaCheckbox">Hinta (0,00)</label>
+            <input type="number" name="hinta" step="0.01" min="0" style="display: none;">
+        </div>
+        <div>
+            <input type="checkbox" id="kappalemaaraCheckbox" name="fields" value="kappalemaara">
+            <label for="kappalemaaraCheckbox">Kappalemäärä</label>
+            <input type="number" name="kappalemaara" min="0" style="display: none;">
+        </div>
+        @* <div>
+            <input type="checkbox" id="kuvaCheckbox" name="fields" value="kuva">
+            <label for="kuvaCheckbox">Kuva</label>
+            <input type="text" name="kuva" style="display: none;">
+        </div> *@
+        <div>
+            <input type="checkbox" id="kuvausCheckbox" name="fields" value="kuvaus">
+            <label for="kuvausCheckbox">Kuvaus</label>
+            <input type="text" name="kuvaus" style="display: none;">
+        </div>
+        <button type="submit">Päivitä tiedot</button>
+    </form>
+
+    <p>------------------------------------------------------------------------------------------------</p>
+
+    <h3>Päivitä tuotteen kuva</h3>
+    <form method="post" asp-page-handler="UpdateProductImage" enctype="multipart/form-data">
+        <label for="productName">Tuotteen nimi:</label>
+        <select id="productName" name="productName">
+            @foreach (var productName in Model.ProductNames)
+            {
+                <option value="@productName">@productName</option>
+            }
+        </select>
+        <label for="img">Kuva:</label>
+        <input type="file" id="img" name="img" required>
+        <input type="submit" value="Päivitä kuva">
+    </form>
+
+<script>
+    var baseUrl = '@Model.BaseUrl';
+</script>
+<script src="~/js/updateProduct.js"></script>
+
+    <p>------------------------------------------------------------------------------------------------</p>
+    
+    @* <section id="tilaukset">
+
+       <h1>Tilaukset</h1>
+        <p>Tilausten hakeminen</p>
+
+        <form method="post" asp-page-handler="GetCustomer">
+            <label for="tilaus_id">Tilaus ID:</label>
+            <input type="text" id="tilaus_id" name="tilaus_id">
+            <input type="submit" value="Etsi tilaus">
+        </form>
+
+    </section> *@
+        <a href="#alkuun">Sivun alkuun</a>
+</body>
+</html>

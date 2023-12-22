@@ -1,0 +1,110 @@
+﻿@page
+@model VerkkokauppaFrontti.Pages.ShoppingCartModel
+@{
+    ViewData["Title"] = "Ostoskori";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Ostoskori</h1>
+    <br>
+    @if(TempData.ContainsKey("SuccessMessage"))
+        {
+            <div class="alert alert-success">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+    else if (TempData.ContainsKey("ErrorMessage"))
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    @if(ShoppingCartModel.theCart.currentShoppingCartList != null)
+    {
+        if(ShoppingCartModel.theCart.currentShoppingCartList.Count() < 1)
+        {
+            <p>Ostoskorissa ei ole vielä tuotteita.</p>
+        }
+        
+        @* Loops through the shopping cart *@
+        for(int i = 0; i < ShoppingCartModel.theCart.currentShoppingCartList.Count(); i++)
+        {
+            <p class="inline">
+                @* Shows the items in shopping cart *@
+                @ShoppingCartModel.theCart.currentShoppingCartList[i].Name, @ShoppingCartModel.theCart.currentShoppingCartList[i].Amount kpl, á hinta @ShoppingCartModel.theCart.currentShoppingCartList[i].Price euroa
+                
+                @* Button for removing one item from the shopping cart *@
+                <form method="post" class="inline" asp-page-handler="RemoveFromTheCart">
+                    <input type="hidden" name="CartIndex" value="@i" /> 
+                    <input type="submit" value="Poista">
+                </form>
+            </p>
+        }
+        if(ShoppingCartModel.theCart.currentShoppingCartList.Count() >= 1)
+        {
+            <br>
+            <p>Yhteensä: @ShoppingCartModel.theCart.CountTheSum() €</p>
+            <br>
+        }
+    }
+    else
+    {
+        <p>Löysit bugin. Jostain syystä ostoskoria ei ole olemassa :O <br> Ota yhteyttä ylläpitoon!</p>
+    }
+
+    @* Button for clearing the whole shopping cart. Appears on the cart page when there are 2 or more items in the cart *@
+    @if(ShoppingCartModel.theCart.currentShoppingCartList.Count() > 1){
+        <form method="post" asp-page-handler="EmptyTheCart">
+            <input type="submit" value="Tyhjennä koko ostoskori">
+        </form>
+    }
+</div>
+
+<div class="text-center">
+    <br>
+    @* Asks if the user is already a customer *@
+    @if(ShoppingCartModel.theCart.currentShoppingCartList.Count() > 0)
+    {
+        <form method="post" asp-page-handler="SetCustomerStatus">
+            <p>Oletko jo asiakas?</p>
+            <input type="submit" name="customerStatus" value="Kyllä">
+            <input type="submit" name="customerStatus" value="Ei">
+        </form>
+    }
+
+    <br>
+
+    @if(ShoppingCartModel.theCart.currentShoppingCartList.Count() > 0){
+        @* If the user is not yet a customer, prompts to add customer *@
+        @if(!ShoppingCartModel.theCart.customerStatus){
+            <p>Lisää asiakastietosi:
+                <form method="post" asp-page-handler="AddCustomer">
+                    <label for="name">Nimi:</label>
+                    <input type="text" id="name" name="name" required>
+                    <label for="email">Email:</label>
+                    <input type="email" onkeyup="this.value = this.value.toLowerCase();" id="email" name="email" required>
+                    <label for="address">Osoite:</label>
+                    <input type="text" id="address" name="address" required>
+                    <label for="phonenumber">Puhelinnumero:</label>
+                    <input type="text" id="phonenumber" name="phonenumber" required>
+                    <input type="submit" value="Lisää">
+                </form>
+            </p>
+        }
+        @* If the user is a customer, prompts to make a purchase*@
+        else if(ShoppingCartModel.theCart.customerStatus){
+            <p>Lisää tilaustietosi:
+                <form method="post" asp-page-handler="PrePurchase">
+                    <label for="email">Email:</label>
+                    <input type="email" onkeyup="this.value = this.value.toLowerCase();" id="email" name="email" required>
+                    <label for="address">Toimitusosoite:</label>
+                    <input type="text" id="address" name="address" required>
+                    <label for="additionalInfo">Lisätiedot:</label>
+                    <input type="text" id="additionalInfo" name="additionalInfo" required>
+                    <input type="submit" value="Tee tilaus">
+                </form>
+            </p>
+        }
+    }
+</div>

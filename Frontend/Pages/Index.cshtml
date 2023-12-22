@@ -1,0 +1,50 @@
+﻿@page
+@model IndexModel
+@{
+
+    ViewData["Title"] = "Verkkokauppa";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Tuotteet</h1>
+    <br>
+    @if (Model.productInfo != null) // Kun data oli haettuna stringiin, piti olla näin: (!string.IsNullOrEmpty(Model.ProductData))
+    {
+        @for(int i = 0; i <= @Model.allProductsList.Count-1; i++)
+        {
+            if(@Model.allProductsList[i].Amount > 0)
+            {
+                <p>__________________________________________________________</p>
+                @* <p>@Model.allProductsList[i].Img</p> *@
+                <img src="@Url.Content($"~/images/{Model.allProductsList[i].Img}")" alt="Product Image" style="width: 200px; height: 200px;" />
+                <p>@Model.allProductsList[i].Name</p>
+                <p>@Model.allProductsList[i].Price €</p>
+                <p>@Model.allProductsList[i].Description</p>
+
+                <form method="post" asp-page-handler="AddToCart">
+                <!-- These are for storing the info for cart, hidden type is not showing on the page -->
+                <input type="hidden" name="ProductId" value="@Model.allProductsList[i].Id" />
+                <input type="hidden" name="ProductName" value="@Model.allProductsList[i].Name" />
+                <input type="hidden" name="ProductPrice" value="@Model.allProductsList[i].Price" />
+    
+                <!-- Drop down button for customer to select the amount -->
+                <select name="ProductAmount">
+                    <!-- <option value="1">Kappalemäärä</option> -->
+
+                    @for (int x = 1; x<=Model.allProductsList[i].Amount; x++)
+                    {
+                        <option value="@x">@x</option>
+                    }
+                </select>
+
+                <input type="submit" value="Lisää ostoskoriin">
+                </form>
+            }
+        }
+    }
+    else
+    {
+        // If failed connecting to database or fetching data, shows the error message
+        <p>@Model.errorMessage</p>
+    }
+</div>
