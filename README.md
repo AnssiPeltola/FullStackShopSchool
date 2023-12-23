@@ -34,7 +34,6 @@ The webshop application allows users to browse products, manage a shopping cart,
 - Adding and viewing products.
 - Managing customer information.
 - Handling shopping cart operations.
-- Processing and viewing orders.
 
 ## Team Members
 This project was collaboratively developed by a team of four coders. Below are the team members and their respective GitHub profiles:
